@@ -2,7 +2,8 @@
 class encrypter
 {
 public:
-	enum Level {
+	enum Level
+	{
 		weak = 0,
 		medium = 1,
 		strong = 2
@@ -98,7 +99,7 @@ private:
 		0x61, 0xc2, 0x9f, 0x25, 0x4a, 0x94, 0x33, 0x66, 0xcc, 0x83, 0x1d, 0x3a, 0x74, 0xe8, 0xcb, 0x8d
 	};
 
-	unsigned char* roundKeys[33];
+	unsigned char* roundKeys[15];
 
 	void KeyExpansion(unsigned char* key, Level level);
 	void KeyScheduleCore(unsigned char* input, int i);
@@ -110,6 +111,5 @@ private:
 	void MixColumns(unsigned char* state);
 	void AddRoundKey(unsigned char* state, unsigned char* key);
 	void DisposeKeys(int roundCount);
-	
 };
 

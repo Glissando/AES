@@ -35,14 +35,16 @@ void encrypter::KeyExpansion(unsigned char* key, Level level = Level::weak)
 		}
 	}
 
-	for (int i = 0; i < rc; i++) {
+	for (int i = 0; i < rc; i++)
+	{
 		unsigned char* expandedKey = new unsigned char[b];
 		int rconVal = 1;
 		int l = n;
 
 		while (l < b) {
 			//Copy key
-			for (int j = 0; j < n; j++) {
+			for (int j = 0; j < n; j++) 
+			{
 				expandedKey[j] = key[j];
 			}
 			
@@ -62,25 +64,30 @@ void encrypter::KeyExpansion(unsigned char* key, Level level = Level::weak)
 			l += 4;
 
 			//2.1/2.2
-			for (int i = 0; i < 3; i++) {
+			for (int i = 0; i < 3; i++) 
+			{
 				AssignTemp(expandedKey, t, l, n);
 				CopyTemp(expandedKey, t, l, n);
 				l += 4;
 			}
 
 			//3.1-3.2
-			if (level == Level::strong) {
+			if (level == Level::strong)
+			{
 				AssignTemp(expandedKey, t, l, n);
-				for (int j = 0; j < 3; j++) {
+				for (int j = 0; j < 3; j++) 
+				{
 					t[j] = sBox[t[j]];
 				}
 				CopyTemp(expandedKey, t, l, n);
 				l += 4;
 			}
 			//3.1-3.2 or 4.1-4.2
-			else if (level >= Level::medium) {
+			else if (level >= Level::medium)
+			{
 				int c = level == Level::medium ? 2 : 3;
-				for (int j = 0; j < c; j++) {
+				for (int j = 0; j < c; j++)
+				{
 					AssignTemp(expandedKey, t, l, n);
 					CopyTemp(expandedKey, t, l, n);
 					l += 4;
@@ -108,21 +115,26 @@ void encrypter::KeyScheduleCore(unsigned char* input, int i)
 
 	output[0] ^= rcon[i];
 
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < 4; i++) 
+	{
 		input[i] = output[i];
 	}
 }
 
 //Step 1.5 / 2.2
-void encrypter::CopyTemp(unsigned char* input, unsigned char* tmp, int ekl, int ikl) {
-	for (int j = 0; j < 4; j++) {
+void encrypter::CopyTemp(unsigned char* input, unsigned char* tmp, int ekl, int ikl)
+{
+	for (int j = 0; j < 4; j++) 
+	{
 		input[ekl + j] = input[ekl - ikl + j] ^ tmp[j];
 	}
 }
 
 //Step 2.1
-void encrypter::AssignTemp(unsigned char* input, unsigned char* tmp, int ekl, int ikl) {
-	for (int j = ekl - 4; j < ekl; j++) {
+void encrypter::AssignTemp(unsigned char* input, unsigned char* tmp, int ekl, int ikl)
+{
+	for (int j = ekl - 4; j < ekl; j++)
+	{
 		tmp[j] = input[j];
 	}
 }
@@ -147,9 +159,7 @@ void encrypter::SubBytes(unsigned char* state)
 // {1,5,9,13},
 // {2,6,10,14},
 // {3,7,11,15}}
-
 //Becomes
-
 //{{0,4,8,12},
 // {5,9,13,1},
 // {10,14,2,6},
@@ -256,6 +266,7 @@ unsigned char* encrypter::encrypt(unsigned char* message, unsigned char* key, Le
 	SubBytes(state);
 	ShiftRows(state);
 	AddRoundKey(state, key);
+	DisposeKeys(numberOfRounds + 1);
 
 	return state;
 }
@@ -266,6 +277,9 @@ unsigned char* encrypter::decrypt(unsigned char* message, unsigned char* key, Le
 	return message;
 }
 
-void encrypter::DisposeKeys(int roundCount) {
-
+void encrypter::DisposeKeys(int roundCount)
+{
+	for (int i = 0; i < roundCount; i++) {
+		delete roundKeys[i];
+	}
 }
