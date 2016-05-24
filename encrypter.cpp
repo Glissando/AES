@@ -280,6 +280,6 @@ unsigned char* encrypter::decrypt(unsigned char* message, unsigned char* key, Le
 void encrypter::DisposeKeys(int roundCount)
 {
 	for (int i = 0; i < roundCount; i++) {
-		delete roundKeys[i];
+		delete[] roundKeys[i];
 	}
 }
